@@ -1,20 +1,33 @@
-# wordclod for all the words in train
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
+#pip install wordcloud
+#pip install matplotlib
+
 import numpy as np
-import pandas as pd 
-import os
-for dirname, _, filenames in os.walk('after_pre.csv'):
-    for filename in filenames:
-        print(os.path.join(dirname, filename))
-        
-test = pd.read_csv('after_pre.csv')
-print('read')
+import pandas as pd
+import matplotlib.pyplot as plt
+from PIL import Image
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
-txt = " ".join(text for text in test['Tweet'])
+#READ THE FILE
+test = pd.read_csv('dataset_after.csv')
 
-wordcloud = WordCloud(max_font_size = 100, max_words = 150, background_color = 'black').generate(txt)
-fig = plt.figure(1, figsize=(10,10))
-plt.imshow(wordcloud, interpolation = 'bilinear')
+
+# wordclod for all the words in train
+text = " ".join(text for text in test['Tweet'])
+
+# Create and Generate a Word Cloud Image
+wordcloud = WordCloud().generate(text)
+
+
+# Generate a word cloud image
+stopwords = set(STOPWORDS)
+mask = np.array(Image.open("kkk.jpg"))
+wordcloud = WordCloud(stopwords=stopwords,background_color='black', max_words=800, 
+                      mask=mask,contour_color='#023075',max_font_size = 100,contour_width=3,
+                      colormap='rainbow').generate(' '.join(test['Tweet']))
+# create image as cloud
+fig = plt.figure(1, figsize=(7,7))
+plt.imshow(wordcloud, interpolation="bilinear")
 plt.axis("off")
+# store to file
+plt.savefig("KPOP.png", format="png")
 plt.show()
