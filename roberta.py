@@ -3,45 +3,13 @@ import neattext.functions as nfx
 import pandas as pd 
 
 # Read The Dataset
-data = pd.read_csv('removeNull_after.csv')
-
-# Select the desired column from the dataset
-tweet_text = data['Tweet']
-
-# Preprocessing -- Data Cleaning 
-# Remove Hashtags
-clean_tweet = tweet_text.apply(nfx.remove_hashtags)
-#Remove Users
-clean_tweet = clean_tweet.apply(lambda x: nfx.remove_userhandles(x))
-#Remove Multiple Spaces
-clean_tweet = clean_tweet.apply(nfx.remove_multiple_spaces)
-#Remove URLs
-clean_tweet = clean_tweet.apply(nfx.remove_urls)
-#Remove Special Characters
-clean_tweet = clean_tweet.apply(nfx.remove_puncts)
-clean_tweet = clean_tweet.apply(nfx.remove_emojis)
-clean_tweet = clean_tweet.apply(nfx.remove_special_characters)
-clean_tweet = clean_tweet.apply(nfx.remove_punctuations)
-#Remove Dates
-clean_tweet = clean_tweet.apply(nfx.remove_dates)
-#Remove Emails and Phone numbers
-clean_tweet = clean_tweet.apply(nfx.remove_emails)
-clean_tweet = clean_tweet.apply(nfx.remove_phone_numbers)
-
-
-#clean_tweet.to_csv('removeNull_after_pre00.csv')
-print('done')
-
-
-
-
-
+data = pd.read_csv('removeNull_after.csv') #dataset file
 
 #to classifiy the data
 from textblob import TextBlob
 # Model 
-def get_sentiment(clean_tweet):
-    blob = TextBlob(clean_tweet)
+def get_sentiment(data):
+    blob = TextBlob(data)
     sentiment_polarity = blob.sentiment.polarity
     sentiment_subjectivity = blob.sentiment.subjectivity
     if sentiment_polarity > 0:
@@ -56,7 +24,7 @@ def get_sentiment(clean_tweet):
     return result
 
 # Save the results 
-sentiment_results= clean_tweet.apply(get_sentiment)
+sentiment_results= data.apply(get_sentiment)
 
 # Add the results to the data file
 data = data.join(pd.json_normalize(sentiment_results)) 
@@ -90,7 +58,7 @@ labels = ['Negative', 'Neutral', 'Positive']
 labels_df = []
 for index in data.index:
     #Sentiment Analysis
-    encoded_tweet = tokenizer(clean_tweet[index], return_tensors='pt')
+    encoded_tweet = tokenizer(data[index], return_tensors='pt')
 
     output = model(**encoded_tweet)
 
@@ -111,7 +79,7 @@ for index in data.index:
     print('************************************************\n')
 
 #Add the preprossed text and the labels into the data frame
-data['Tweet'] = clean_tweet
+data['Tweet'] = data
 data['Label'] = labels_df
 
 #visualization
