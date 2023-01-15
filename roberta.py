@@ -1,7 +1,4 @@
-#cleaning the data
-import neattext.functions as nfx
 import pandas as pd 
-
 # Read The Dataset
 data = pd.read_csv('removeNull_after.csv') #dataset file
 
